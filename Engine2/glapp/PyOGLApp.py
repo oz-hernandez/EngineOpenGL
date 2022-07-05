@@ -15,7 +15,7 @@ class PyOGLApp():
         pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), DOUBLEBUF | OPENGL)
-        self.camera = Camera()
+        self.camera = None
         self.program_id = None
 
     def draw_world_axes(self):
