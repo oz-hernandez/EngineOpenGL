@@ -1,11 +1,11 @@
 # EngineOpenGL
 3d Engine made with PyOpenGL
 
-create a virtual env
+### create a virtual env:
 python3 -m venv testEnv
 
-install requirements:
+### install requirements:
 pip install -r requirements.txt
 
-run:
+### run:
 python Engine2/Projection.py
