@@ -61,7 +61,7 @@ def scale3(matrix, x, y, z):
     sc = scale_mat3(x, y, z)
     return matrix @ sc
 
-def rotate(matrix, angle, axis):
+def rotate(matrix, angle, axis, local = True):
     rot = identity_mat()
     if axis == 'x':
         rot = rotate_x_mat(angle)
@@ -69,4 +69,10 @@ def rotate(matrix, angle, axis):
         rot = rotate_y_mat(angle)
     elif axis == 'z':
         rot = rotate_z_mat(angle)
-    return matrix @ rot
+    # always keep the x axis parallel.
+    # only rotate on y world axis
+    # so the camera doesn't get crazy
+    if local:
+        return matrix @ rot
+    else:
+        return rot @ matrix
