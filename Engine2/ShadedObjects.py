@@ -15,7 +15,8 @@ out vec3 fragpos;
 out vec3 light_pos;
 void main() 
 {
-    light_pos = vec3(5, 5, 5);
+    light_pos = vec3(inverse(model_mat) * 
+                    vec4(view_mat[3][0], view_mat[3][1], view_mat[3][2], 1));
     gl_Position = projection_mat * inverse(view_mat) * model_mat * vec4(pos, 1);
     normal = vertex_normal;
     fragpos = vec3(model_mat * vec4(pos, 1));
