@@ -1,5 +1,13 @@
+import math
+
 import numpy as np
 from math import *
+
+
+class Rotation:
+    def __init__(self, angle, axis):
+        self.angle = angle
+        self.axis = axis
 
 def identity_mat():
     return np.array([[1, 0, 0, 0],
@@ -49,6 +57,15 @@ def rotate_z_mat(angle):
                      [0, 0, 1, 0],
                      [0, 0, 0, 1]], np.float32)
 
+def rotate_axis(angle, axis):
+    c = cos(radians(angle))
+    s = sin(radians(angle))
+    axis = axis.normalize()
+    return np.array([[c + math.pow(axis.x, 2)*(1-c), axis.x*axis.y*(1-c)-(axis.z*s), axis.x*axis.z*(1-c)+(axis.y*s), 0],
+                     [(axis.y*axis.x)*(1-c)+(axis.z*s), c+math.pow(axis.y, 2)*(1-c), (axis.y*axis.z)*(1-c)-axis.x*s, 0],
+                     [(axis.z*axis.x)*(1-c)-(axis.y*s), (axis.z*axis.y)*(1-c)+(axis.x*s), c+math.pow(axis.z, 2)*(1-c), 0],
+                     [0, 0, 0, 1]], np.float32)
+
 def translate(matrix, x, y, z):
     trans = translate_mat(x, y, z)
     return matrix @ trans
@@ -72,6 +89,13 @@ def rotate(matrix, angle, axis, local = True):
     # always keep the x axis parallel.
     # only rotate on y world axis
     # so the camera doesn't get crazy
+    if local:
+        return matrix @ rot
+    else:
+        return rot @ matrix
+
+def rotateA(matrix, angle, axis, local = True):
+    rot = rotate_axis(angle, axis)
     if local:
         return matrix @ rot
     else:

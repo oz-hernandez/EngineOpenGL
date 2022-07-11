@@ -1,23 +1,24 @@
 from glapp.PyOGLApp import *
-import numpy as np
-from glapp.Utils import *
-from glapp.GraphicsData import *
-from glapp.Square import *
-from glapp.Axes import *
-from glapp.Cube import *
 from glapp.LoadMesh import *
 
 vertex_shader = r'''
 #version 330 core
 in vec3 pos;
 in vec3 vertex_color;
+in vec3 vertex_normal;
 uniform mat4 projection_mat;
 uniform mat4 model_mat;
 uniform mat4 view_mat;
 out vec3 color;
+out vec3 normal;
+out vec3 fragpos;
+out vec3 light_pos;
 void main() 
 {
+    light_pos = vec3(5, 5, 5);
     gl_Position = projection_mat * inverse(view_mat) * model_mat * vec4(pos, 1);
+    normal = vertex_normal;
+    fragpos = vec3(model_mat * vec4(pos, 1));
     color = vertex_color;
 }
 '''
@@ -25,14 +26,22 @@ void main()
 fragment_shader = r'''
 #version 330 core
 in vec3 color;
+in vec3 normal;
+in vec3 fragpos;
+in vec3 light_pos;
 out vec4 frag_color;
 void main() 
 {
-    frag_color = vec4(color, 1);
+    vec3 light_color = vec3(1, 0, 0);
+    vec3 norm = normalize(normal);
+    vec3 light_direction = normalize(light_pos - fragpos);
+    float diff = max(dot(norm, light_direction), 0);
+    vec3 diffuse = diff * light_color;
+    frag_color = vec4(color * diffuse, 1);
 }
 '''
 
-class Projection(PyOGLApp):
+class ShadedObjects(PyOGLApp):
     def __init__(self):
         super().__init__(850, 200, 1000, 800)
         self.square = None
@@ -42,12 +51,9 @@ class Projection(PyOGLApp):
 
     def initialize(self):
         self.program_id = create_program(vertex_shader, fragment_shader)
-        # self.square = Square(self.program_id, pygame.Vector3(-1,1,0))
-        self.axis = Axes(self.program_id)
-        # self.cube = Cube(self.program_id)
         self.teapot = LoadMesh("models/teapot.obj", self.program_id,
-                               scale=pygame.Vector3(5, 5, 5),
-                               rotation = Rotation(45, pygame.Vector3(1, 0, 1)))
+                               scale=pygame.Vector3(1, 1, 1),
+                               move_rotation=Rotation(0, pygame.Vector3(0, 1, 0)))
         self.camera = Camera(self.program_id, self.screen_width, self.screen_height)
         glEnable(GL_DEPTH_TEST)
 
@@ -58,9 +64,6 @@ class Projection(PyOGLApp):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glUseProgram(self.program_id)
         self.camera.update()
-        # self.square.draw()
-        self.axis.draw()
-        # self.cube.draw()
         self.teapot.draw()
 
-Projection().mainloop()
+ShadedObjects().mainloop()

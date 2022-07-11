@@ -8,4 +8,4 @@ python3 -m venv testEnv
 pip install -r requirements.txt
 
 ### run:
-python Engine2/Projection.py
+python Engine2/ShadedObjects.py

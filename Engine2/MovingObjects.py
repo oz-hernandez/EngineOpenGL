@@ -1,3 +1,5 @@
+import pygame
+
 from glapp.PyOGLApp import *
 import numpy as np
 from glapp.Utils import *
@@ -42,12 +44,12 @@ class Projection(PyOGLApp):
 
     def initialize(self):
         self.program_id = create_program(vertex_shader, fragment_shader)
-        # self.square = Square(self.program_id, pygame.Vector3(-1,1,0))
         self.axis = Axes(self.program_id)
-        # self.cube = Cube(self.program_id)
+        self.cube = Cube(self.program_id,
+                         move_rotation=Rotation(1, pygame.Vector3(0, 1, 0)))
         self.teapot = LoadMesh("models/teapot.obj", self.program_id,
-                               scale=pygame.Vector3(5, 5, 5),
-                               rotation = Rotation(45, pygame.Vector3(1, 0, 1)))
+                               scale=pygame.Vector3(1, 1, 1),
+                               move_rotation=Rotation(1, pygame.Vector3(0, 1, 0)))
         self.camera = Camera(self.program_id, self.screen_width, self.screen_height)
         glEnable(GL_DEPTH_TEST)
 
@@ -58,9 +60,7 @@ class Projection(PyOGLApp):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glUseProgram(self.program_id)
         self.camera.update()
-        # self.square.draw()
         self.axis.draw()
-        # self.cube.draw()
-        self.teapot.draw()
+        self.cube.draw()
 
 Projection().mainloop()
