@@ -8,10 +8,12 @@ from .Uniform import *
 class Camera:
     def __init__(self, program_id, w, h):
         self.transformation = identity_mat()
+        self.transformation[2][3] = 6;
+        self.transformation[1][3] = 2;
         self.last_mouse = pygame.math.Vector2(0, 0)
         self.mouse_sensitivityX = 0.1
         self.mouse_sensitivityY = 0.1
-        self.key_sensitivity = 0.005
+        self.key_sensitivity = 0.1
         self.projection_mat = self.perspective_mat(60, w/h, 0.01, 10000)
         self.projection = Uniform("mat4", self.projection_mat)
         self.projection.find_variable(program_id, "projection_mat")
